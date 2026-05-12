@@ -24,6 +24,7 @@ function AdminPositionsPage() {
   const [loading, setLoading]       = useState(false)
   const [error, setError]           = useState(null)
   const [success, setSuccess]       = useState(null)
+  const [toastType, setToastType]   = useState('success')
   const [page, setPage]             = useState(1)
   const [lastPage, setLastPage]     = useState(1)
   const [total, setTotal]           = useState(0)
@@ -68,6 +69,8 @@ function AdminPositionsPage() {
       setSelectedIds([])
       setError(null)
       setSuccess(`${selectedIds.length} position${selectedIds.length !== 1 ? 's' : ''} deleted.`)
+      setToastType('danger')
+      setTimeout(() => { setSuccess(null); setToastType('success') }, 4000)
     } catch {
       setError('Failed to delete selected positions.')
       setSuccess(null)
@@ -205,6 +208,8 @@ function AdminPositionsPage() {
       setDeleteTarget(null)
       setError(null)
       setSuccess('Position deleted successfully.')
+      setToastType('danger')
+      setTimeout(() => { setSuccess(null); setToastType('success') }, 4000)
     } catch {
       setError('Failed to delete position.')
       setSuccess(null)
@@ -261,7 +266,7 @@ function AdminPositionsPage() {
         </div>
 
         <div className="admin-toast-stack" aria-live="polite">
-          {success ? <div className="admin-alert success">{success}</div> : null}
+          {success ? <div className={`admin-alert ${toastType === 'danger' ? 'error' : 'success'}`}>{success}</div> : null}
           {error ? <div className="admin-alert error">{error}</div> : null}
         </div>
 

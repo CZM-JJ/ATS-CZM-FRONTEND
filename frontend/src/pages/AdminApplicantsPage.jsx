@@ -42,6 +42,7 @@ function AdminApplicantsPage() {
   const [loading, setLoading]             = useState(false)
   const [error, setError]                 = useState(null)
   const [success, setSuccess]             = useState(null)
+  const [toastType, setToastType]         = useState('success')
   const [searchTerm, setSearchTerm]       = useState(() => getParam('search', ''))
   const [statusFilter, setStatusFilter]   = useState(() => getParam('status', ''))
   const [positionFilter, setPositionFilter] = useState(() => getParam('position', ''))
@@ -290,8 +291,8 @@ function AdminApplicantsPage() {
       a.download = `${toName(applicant.last_name || 'applicant')}_${toName(applicant.first_name || 'cv')}.${ext}`
       a.click()
       URL.revokeObjectURL(url)
-    } catch {
-      setViewError('Unable to download CV.')
+    } catch (err) {
+      setViewError(err?.message || 'Unable to download CV.')
     }
   }
 
@@ -321,7 +322,8 @@ function AdminApplicantsPage() {
       setSelectedIds((prev) => prev.filter((id) => id !== forceTarget.id))
       setForceTarget(null)
       setSuccess('Applicant permanently deleted.')
-      setTimeout(() => setSuccess(null), 4000)
+      setToastType('danger')
+      setTimeout(() => { setSuccess(null); setToastType('success') }, 4000)
     } catch {
       setError('Failed to permanently delete applicant.')
     } finally {
@@ -408,7 +410,8 @@ function AdminApplicantsPage() {
       setSelectedIds([])
       setShowBulkForceModal(false)
       setSuccess(`${selectedIds.length} applicant${selectedIds.length !== 1 ? 's' : ''} permanently deleted.`)
-      setTimeout(() => setSuccess(null), 4000)
+      setToastType('danger')
+      setTimeout(() => { setSuccess(null); setToastType('success') }, 4000)
     } catch {
       setError('Failed to permanently delete selected applicants.')
     } finally {
@@ -618,7 +621,7 @@ function AdminApplicantsPage() {
         </div>
 
         <div className="admin-toast-stack" aria-live="polite">
-          {success ? <div className="admin-alert success">{success}</div> : null}
+            {success ? <div className={`admin-alert ${toastType === 'danger' ? 'error' : 'success'}`}>{success}</div> : null}
           {error ? <div className="admin-alert error">{error}</div> : null}
         </div>
 

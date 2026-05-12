@@ -19,6 +19,7 @@ export default function AdminUsersPage() {
   const [loading, setLoading]   = useState(false)
   const [error, setError]       = useState(null)
   const [success, setSuccess]   = useState(null)
+  const [toastType, setToastType] = useState('success')
 
   const [modalOpen, setModalOpen]   = useState(false)
   const [editUser, setEditUser]     = useState(null)
@@ -94,7 +95,9 @@ export default function AdminUsersPage() {
     try {
       await userAPI.delete(token, deleteTarget.id)
       setUsers(prev => prev.filter(u => u.id !== deleteTarget.id))
-      setSuccess('User deleted.'); setTimeout(() => setSuccess(null), 4000)
+      setSuccess('User deleted.')
+      setToastType('danger')
+      setTimeout(() => { setSuccess(null); setToastType('success') }, 4000)
     } catch { setError('Network error.') }
     finally  { setDeleting(false); setDeleteTarget(null) }
   }
@@ -142,7 +145,7 @@ export default function AdminUsersPage() {
       {/* ── Users table ── */}
       <div className="admin-card um-card">
         <div className="admin-toast-stack" aria-live="polite">
-          {success ? <div className="admin-alert success">{success}</div> : null}
+          {success ? <div className={`admin-alert ${toastType === 'danger' ? 'error' : 'success'}`}>{success}</div> : null}
           {error ? <div className="admin-alert error">{error}</div> : null}
         </div>
         <div className="um-card-head">
